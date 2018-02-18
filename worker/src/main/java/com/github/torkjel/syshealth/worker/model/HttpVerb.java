@@ -1,6 +1,7 @@
 package com.github.torkjel.syshealth.worker.model;
 
-public enum TargetType {
-    healthcheck,
-    probe
+public enum HttpVerb {
+    GET,
+    POST,
+    HEAD
 }

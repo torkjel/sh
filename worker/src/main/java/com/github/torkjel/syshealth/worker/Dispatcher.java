@@ -30,10 +30,10 @@ public class Dispatcher {
     @SneakyThrows
     public BatchResponse process() {
         for (Profile p : batch.getProfiles()) {
-            List<Future<TargetResult>> profileRestults = new ArrayList<>();
+            List<Future<TargetResult>> profileResults = new ArrayList<>();
             for (Target t : p.getTargets())
-                profileRestults.add(targetProcessor.process(t));
-            status.put(p, profileRestults);
+                profileResults.add(targetProcessor.process(t));
+            status.put(p, profileResults);
         }
 
         BatchResponse.BatchResponseBuilder builder = BatchResponse

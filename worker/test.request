@@ -1,18 +1,35 @@
 {
   "batchId":"123",
-  "profiles":[{
-    "key":"adsf", "targets":[{
-      "url":"http://localhost:7080/hello",
-      "type": "URL_GET",
-      "timeout":123
-    },{
-      "url":"http://localhost:7080/hello2",
-      "type": "URL_GET",
-      "timeout":123
-    },{
-      "url":"http://localhost:7080/hello4",
-      "type": "URL_GET",
-      "timeout":123
-    }]
-  }]
+  "profiles":[
+    {
+      "key" : "adsf",
+      "targets" : [
+        {
+          "type" : "probe",
+          "verb" : "GET",
+          "url":"http://localhost:7080/hello",
+          "timeout" : 1000,
+          "payload" : null,
+          "headers" : [ {"X-Header", "value" } ],
+          "follow-redirects" : true
+        },
+        {
+          "type" : "probe",
+          "verb" : "POST",
+          "url":"http://localhost:7080/hello2",
+          "timeout" : 1000,
+          "payload" : "boo loo",
+          "headers" : [ ["X-Header", "value"] ],
+          "follow-redirects" : true
+        },
+        {
+          "type" : "healthcheck",
+          "url":"http://localhost:7080/hello2",
+          "timeout" : 1000,
+          "headers" : [ {"X-Header", "value" } ],
+          "follow-redirects" : true
+        }
+      ]
+    }
+  ]
  }

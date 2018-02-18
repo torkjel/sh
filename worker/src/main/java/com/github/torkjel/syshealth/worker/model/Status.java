@@ -6,16 +6,18 @@ import java.util.List;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 @Builder
 @EqualsAndHashCode
 @Getter
+@ToString
 public class Status {
-    private final Code success;
+    private final Code code;
     private final String name;
     private final Long time;
-    private final String reason;
-    private final List<Status> substatus = new ArrayList<>();
+    private final int httpStatusCode;
+    private final String httpStatusReason;
 
     public static enum Code {
         SUCCESS,
@@ -23,5 +25,8 @@ public class Status {
         FAILED,
         FLOODED // reponse truncated,
     }
-}
 
+    public boolean success() {
+        return code == Code.SUCCESS;
+    }
+}

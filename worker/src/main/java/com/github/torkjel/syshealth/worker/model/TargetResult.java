@@ -1,13 +1,22 @@
 package com.github.torkjel.syshealth.worker.model;
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
-@Builder
 @Getter
-@EqualsAndHashCode
-public class TargetResult {
+@ToString
+public abstract class TargetResult {
+
     private final String url;
     private final Status status;
+
+    protected TargetResult(String url, Status status) {
+        this.url = url;
+        this.status = status;
+    }
+
+    public boolean success() {
+        return status.success();
+    }
+
 }

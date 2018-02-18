@@ -7,4 +7,6 @@ import com.github.torkjel.syshealth.worker.model.TargetResult;
 
 interface ResponseParser {
     TargetResult parse(Target target, Response response, long startTime);
+
+    TargetResult timeout(Target target, long startTime);
 }

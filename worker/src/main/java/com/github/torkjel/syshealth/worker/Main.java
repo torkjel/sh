@@ -2,58 +2,49 @@ package com.github.torkjel.syshealth.worker;
 
 import static spark.Spark.*;
 
+import org.apache.log4j.Logger;
+
 import com.github.torkjel.syshealth.worker.model.Batch;
 import com.github.torkjel.syshealth.worker.model.BatchResponse;
-import com.github.torkjel.syshealth.worker.model.TargetType;
 
+import lombok.Getter;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
 
-import static org.asynchttpclient.Dsl.*;
-
+@Getter
 public class Main {
 
-    static TargetProcessor targetProcessor;
-
-    static {
-        targetProcessor = TargetProcessingService.builder()
-                .processor(
-                        TargetType.URL_GET,
-                        new ProbeProcessor(
-                                new ProbeResponseParser(),
-                                asyncHttpClient(config())))
-                .build();
-    }
+    private final static Logger LOG = Logger.getLogger(Main.class);
 
     public static void main(String[] args) {
-        try {
-            new Main(9080, targetProcessor).go();
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
+        new Main(new Wiring()).go();
     }
 
-    private final int port;
-    private final TargetProcessor processor;
+    private final Wiring w;
 
-    public Main(int port, TargetProcessor procesor) {
-        this.port = port;
-        this.processor = procesor;
+    public Main(Wiring w) {
+        this.w = w;
     }
 
-    private void go() {
-        port(port);
-        get("/hello", (req, res) -> "Hello world");
+    public void go() {
+        port(w.getPort());
         post("/batch", this::processBatch);
         Spark.awaitInitialization();
-        System.out.println("Foo");
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            LOG.info("Going down.");
+        }));
+        LOG.info("We're up!");
     }
 
-    private String processBatch(Request req, Response res) {
-        String response = new Dispatcher(processor, Batch.parse(req.body())).process().toJson();
+    public String processBatch(Request req, Response res) {
+        String response = process(Batch.parse(req.body())).toJson();
         res.type("application/json");
         return response;
+    }
+
+    public BatchResponse process(Batch batch) {
+        return new Dispatcher(w.getTargetProcessingService(), batch).process();
     }
 }
 

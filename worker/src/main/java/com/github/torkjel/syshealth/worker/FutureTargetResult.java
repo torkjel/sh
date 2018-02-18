@@ -31,7 +31,14 @@ public class FutureTargetResult implements Future<TargetResult> {
 
     @Override
     public TargetResult get() throws InterruptedException, ExecutionException {
-        return parse(delegate.get());
+        try {
+            return parse(delegate.get());
+        } catch (ExecutionException e) {
+            if (e.getCause() instanceof TimeoutException) {
+                return parser.timeout(target, startTime);
+            }
+            throw e;
+        }
     }
 
     @Override

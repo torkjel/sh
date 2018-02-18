@@ -9,10 +9,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Singular;
 import lombok.SneakyThrows;
+import lombok.ToString;
 
 @Builder
 @Getter
 @EqualsAndHashCode
+@ToString
 public class BatchResponse {
     private final String batchId;
 
@@ -22,5 +24,12 @@ public class BatchResponse {
     @SneakyThrows
     public String toJson() {
         return new ObjectMapper().writer().writeValueAsString(this);
+    }
+
+    public ProfileResponse profile(String profileKey) {
+        return profiles.stream()
+                .filter(pr -> pr.getKey().equals(profileKey))
+                .findFirst()
+                .orElse(null);
     }
 }
